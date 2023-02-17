@@ -1,20 +1,21 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:tests/providers/places_list.dart';
+import 'package:tests/widgets/widgets.dart';
 
 class MainScreen extends StatelessWidget {
   const MainScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
     return Column(
-      children: const [
-        CustomAppBar(),
-        SearchBar(),
-        PopularSlide(places: places),
-        PopularSlide(places: places),
-        PopularSlide(places: places),
-        PopularSlide(places: places),
+      children: [
+        const CustomAppBar(),
+        const SearchBar(),
+        const PopularSlide(places: places),
+        const RecentCollectionSlide(),
+        SizedBox(height: size.height * 0.1),
       ],
     );
   }
@@ -67,8 +68,8 @@ class CustomAppBar extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         const Text(
-          'Where to you want\nto go?',
-          style: TextStyle(fontSize: 20),
+          'Where to you want to go?',
+          style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500),
         ),
         CircleAvatar(
           backgroundColor: Colors.white,
@@ -90,14 +91,14 @@ class PopularSlide extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        _PopularSlideHeader(),
+        const SlideHeader(title: 'Popular travel'),
         Container(
           clipBehavior: Clip.antiAliasWithSaveLayer,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
           ),
           margin: const EdgeInsets.symmetric(vertical: 20),
-          height: 275,
+          height: 314,
           child: ListView(
             scrollDirection: Axis.horizontal,
             children: List.generate(
@@ -128,13 +129,13 @@ class _PopularSlideCard extends StatelessWidget {
           BoxShadow(color: Colors.grey.withOpacity(0.4), spreadRadius: 10),
         ],
       ),
-      width: 200.0,
+      width: 250.0,
       child: Column(
         children: [
           Image.network(
             place['image']!,
-            height: 150,
-            width: 200,
+            height: 190,
+            width: double.infinity,
             fit: BoxFit.cover,
           ),
           Padding(
@@ -197,28 +198,93 @@ class _PopularSlideCard extends StatelessWidget {
   }
 }
 
-class _PopularSlideHeader extends StatelessWidget {
+class RecentCollectionSlide extends StatelessWidget {
+  const RecentCollectionSlide({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Column(
       children: [
-        const Text(
-          'Popular travel',
-          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+        const SlideHeader(title: 'Recent Collection'),
+        const SizedBox(
+          height: 14,
         ),
-        RichText(
-          text: TextSpan(
-            text: 'View all',
-            style: const TextStyle(
-              color: Colors.blue,
-              fontWeight: FontWeight.w500,
-              decoration: TextDecoration.underline,
-            ),
-            recognizer: TapGestureRecognizer()..onTap = () => {},
+        ...List.generate(
+          3,
+          (index) => _RecentItem(
+            recentItem: recentCollectionList[index],
           ),
         ),
       ],
+    );
+  }
+}
+
+class _RecentItem extends StatelessWidget {
+  const _RecentItem({required this.recentItem});
+
+  final Map<String, String> recentItem;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        gradient: const LinearGradient(
+          colors: [
+            Color(0xFFdae7e3),
+            Color(0xFFffffff),
+          ],
+        ),
+      ),
+      child: Row(
+        children: [
+          Container(
+            clipBehavior: Clip.antiAliasWithSaveLayer,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Image.network(
+              width: 70,
+              height: 70,
+              recentItem['image']!,
+              fit: BoxFit.cover,
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  recentItem['title']!,
+                  style: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.w500),
+                  overflow: TextOverflow.ellipsis,
+                ),
+                Text(
+                  recentItem['desc']!,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 15),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(60),
+              color: Colors.black,
+            ),
+            child: Text(
+              '\$${recentItem['price']}',
+              style: const TextStyle(color: Colors.white, fontSize: 13),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
