@@ -2,6 +2,9 @@
 
 A new Flutter project.
 
+![Traveling App Cut](https://user-images.githubusercontent.com/79495707/219796560-7e842820-841b-4bda-99dc-cd646707d066.png)
+
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.
